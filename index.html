@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azar &amp; Abi Habib — Interactive Designer Table</title>
+<style>
+  :root{
+    --yellow:#F2C200;
+    --black:#1A1A1A;
+    --grey:#FAF9F5;
+    --line:#EDEAE0;
+    --line-strong:#D8D5CA;
+    --text-muted:#777;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:#fff;
+    color:var(--black);
+  }
+  .app{
+    max-width:1100px;
+    margin:0 auto;
+    border:1px solid var(--line);
+    min-height:100vh;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    padding:0;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+  header .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:230px;
+    flex-shrink:0;
+    padding:14px 28px 14px 16px;
+  }
+  header .brand img{
+    height:130px;
+    width:auto;
+    display:block;
+  }
+  header .toggle-zone{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    padding:14px 32px;
+  }
+  .layout{
+    display:flex;
+    min-height:600px;
+  }
+  .sidebar{
+    width:230px;
+    flex-shrink:0;
+    background:var(--grey);
+    border-right:1px solid var(--line);
+    padding:20px 16px;
+    overflow-y:auto;
+  }
+  .group-label{
+    background:var(--yellow);
+    color:var(--black);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+    text-align:center;
+    padding:8px 12px;
+    border-radius:6px;
+    margin-bottom:10px;
+  }
+  .chip-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:18px;
+  }
+  .chip{
+    border:1px solid var(--line-strong);
+    background:#fff;
+    color:#444;
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:all 0.12s ease;
+  }
+  .chip:hover{
+    border-color:var(--black);
+  }
+  .chip.active{
+    background:#E2DFD5;
+    border-color:#C9C5B6;
+    color:var(--black);
+    font-weight:600;
+  }
+  .main{
+    flex:1;
+    padding:20px 32px 26px;
+    display:flex;
+    flex-direction:column;
+  }
+  .toggle{
+    display:flex;
+    flex-shrink:0;
+  }
+  .toggle button{
+    border:1.5px solid var(--black);
+    background:#fff;
+    color:var(--black);
+    font-size:13px;
+    font-weight:600;
+    padding:10px 22px;
+    cursor:pointer;
+  }
+  .toggle button:first-child{
+    border-radius:7px 0 0 7px;
+    border-right:none;
+  }
+  .toggle button:not(:first-child):not(:last-child){
+    border-radius:0;
+    border-right:none;
+  }
+  .toggle button:last-child{
+    border-radius:0 7px 7px 0;
+  }
+  .toggle button.active{
+    background:var(--black);
+    color:#fff;
+  }
+  .panel{
+    flex:1;
+    background:var(--grey);
+    border:1px solid var(--line);
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+    text-align:center;
+    gap:16px;
+  }
+  .panel-label{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+  }
+  .mood-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    width:100%;
+    max-width:480px;
+    flex:1;
+  }
+  .mood-grid div{
+    border-radius:8px;
+  }
+  .render-box{
+    background:#F0EDE3;
+    border:1.5px dashed var(--line-strong);
+    border-radius:8px;
+    width:100%;
+    max-width:560px;
+    flex:1;
+    min-height:280px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#999;
+    font-size:13px;
+  }
+  .selection-summary{
+    font-size:12px;
+    color:var(--text-muted);
+    max-width:420px;
+    line-height:1.7;
+  }
+  .tile-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    width:100%;
+    max-width:540px;
+  }
+  .tile-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    text-align:left;
+  }
+  .tile-card .swatch{
+    height:64px;
+  }
+  .tile-card .info{
+    padding:6px 8px;
+  }
+  .tile-card .info .name{
+    font-size:11px;
+    font-weight:600;
+    color:var(--black);
+  }
+  .tile-card .info .stock{
+    font-size:10px;
+    color:#2E8B57;
+    margin-top:2px;
+  }
+  .actions{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+  }
+  .actions button{
+    flex:1;
+    font-size:13px;
+    font-weight:600;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .btn-generate{
+    background:var(--yellow);
+    color:var(--black);
+    border:none;
+  }
+  .btn-send{
+    background:#fff;
+    color:var(--black);
+    border:1.5px solid var(--black);
+  }
+  .footer-bee{
+    position:fixed;
+    bottom:18px;
+    right:18px;
+    opacity:0.9;
+  }
+  .footer-bee img{
+    width:54px;
+    height:auto;
+    display:block;
+  }
+  @media (max-width:760px){
+    .layout{flex-direction:column;}
+    .sidebar{width:100%; border-right:none; border-bottom:1px solid var(--line);}
+    .footer-bee{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <img src="logo.png" alt="Azar &amp; Abi Habib logo">
+    </div>
+    <div class="toggle-zone">
+      <div class="toggle">
+        <button id="btnSelection">selection</button>
+        <button id="btnMood" class="active">moodboard</button>
+        <button id="btnSpace">space visualizer</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="group-label">size</div>
+      <div class="chip-row" id="sizeRow"></div>
+
+      <div class="group-label">category</div>
+      <div class="chip-row" id="categoryRow"></div>
+
+      <div class="group-label">style</div>
+      <div class="chip-row" id="styleRow"></div>
+
+      <div class="group-label">space</div>
+      <div class="chip-row" id="spaceRow"></div>
+
+      <div class="group-label">faces</div>
+      <div class="chip-row" id="facesRow"></div>
+    </div>
+
+    <div class="main">
+      <div class="panel" id="panel"></div>
+
+      <div class="actions">
+        <button class="btn-generate" id="btnGenerate">generate</button>
+        <button class="btn-send" id="btnSend">send to whatsapp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-bee">
+  <img src="3d_logo_bee.png" alt="Azar &amp; Abi Habib bee mark">
+</div>
+
+<script>
+const data = {
+  category: ['concrete','marble','patterns'],
+  size: ['30x60','60x60','60x120','80x80'],
+  style: ['boho','art deco','contemporary'],
+  space: ['wc','kitchen','reception','living room','building entrance'],
+  faces: ['wall 1','wall 2','floor 1','floor 2','shower floor']
+};
+
+// Mock catalog standing in for the live Odoo product/stock feed
+const catalog = [
+  { name:'Calacatta Marble', category:'marble', size:'60x120', style:'contemporary', color:'#E8E3D4', stock:42 },
+  { name:'Carrara Classic', category:'marble', size:'60x60', style:'art deco', color:'#D8D2BE', stock:18 },
+  { name:'Onyx Veil', category:'marble', size:'80x80', style:'contemporary', color:'#C9C2A8', stock:7 },
+  { name:'Urban Concrete Grey', category:'concrete', size:'60x120', style:'contemporary', color:'#A9A9A4', stock:55 },
+  { name:'Loft Concrete Sand', category:'concrete', size:'30x60', style:'boho', color:'#B9AE96', stock:30 },
+  { name:'Industrial Concrete Dark', category:'concrete', size:'60x60', style:'contemporary', color:'#6E6E68', stock:12 },
+  { name:'Moroccan Tile Pattern', category:'patterns', size:'30x60', style:'boho', color:'#C97B4A', stock:24 },
+  { name:'Art Deco Fan Pattern', category:'patterns', size:'60x60', style:'art deco', color:'#2E2A22', stock:9 },
+  { name:'Geometric Mosaic', category:'patterns', size:'30x60', style:'boho', color:'#D7B23A', stock:0 }
+];
+
+let sel = { category: 'marble', size: '60x120', style: 'contemporary', space: 'living room', faces: ['floor 1'] };
+let mode = 'mood';
+
+function chip(label, group, active){
+  return `<button class="chip${active ? ' active' : ''}" data-group="${group}" data-label="${label}">${label}</button>`;
+}
+
+function render(){
+  document.getElementById('categoryRow').innerHTML = data.category.map(s => chip(s,'category', sel.category===s)).join('');
+  document.getElementById('sizeRow').innerHTML = data.size.map(s => chip(s,'size', sel.size===s)).join('');
+  document.getElementById('styleRow').innerHTML = data.style.map(s => chip(s,'style', sel.style===s)).join('');
+  document.getElementById('spaceRow').innerHTML = data.space.map(s => chip(s,'space', sel.space===s)).join('');
+  document.getElementById('facesRow').innerHTML = data.faces.map(s => chip(s,'faces', sel.faces.includes(s))).join('');
+
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.group, l = btn.dataset.label;
+      if (g === 'faces'){
+        const i = sel.faces.indexOf(l);
+        if (i >= 0){ if (sel.faces.length > 1) sel.faces.splice(i,1); }
+        else sel.faces.push(l);
+      } else {
+        sel[g] = l;
+      }
+      render();
+      renderPanel();
+    });
+  });
+}
+
+function renderPanel(){
+  const facesText = sel.faces.join(', ');
+  const panel = document.getElementById('panel');
+  if (mode === 'selection'){
+    const matches = catalog.filter(t => t.category === sel.category && t.size === sel.size && t.style === sel.style);
+    const pool = matches.length ? matches : catalog.filter(t => t.category === sel.category);
+    panel.innerHTML = `
+      <div class="panel-label">in-stock tiles matching your selection</div>
+      <div class="tile-grid">
+        ${pool.map(t => `
+          <div class="tile-card">
+            <div class="swatch" style="background:${t.color};"></div>
+            <div class="info">
+              <div class="name">${t.name}</div>
+              <div class="stock" style="color:${t.stock > 0 ? '#2E8B57' : '#B33A3A'};">${t.stock > 0 ? t.stock + ' m² in stock' : 'out of stock'}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="selection-summary">${sel.category} &middot; ${sel.size} &middot; ${sel.style} &middot; live from Odoo stock</div>
+    `;
+  } else if (mode === 'mood'){
+    panel.innerHTML = `
+      <div class="panel-label">moodboard preview</div>
+      <div class="mood-grid">
+        <div style="background:#E8E3D4;"></div>
+        <div style="background:#D8D2BE;"></div>
+        <div style="background:#1A1A1A;"></div>
+        <div style="background:#F2C200;"></div>
+      </div>
+      <div class="selection-summary">${sel.category} &middot; ${sel.size} &middot; ${sel.style} &middot; ${sel.space} &middot; ${facesText}</div>
+    `;
+  } else {
+    panel.innerHTML = `
+      <div class="panel-label">space visualizer preview</div>
+      <div class="render-box">CGI render of ${sel.space}</div>
+      <div class="selection-summary">${sel.category} &middot; ${sel.size} &middot; ${sel.style} &middot; applied to ${facesText}</div>
+    `;
+  }
+}
+
+function setMode(newMode){
+  mode = newMode;
+  document.getElementById('btnSelection').classList.toggle('active', mode === 'selection');
+  document.getElementById('btnMood').classList.toggle('active', mode === 'mood');
+  document.getElementById('btnSpace').classList.toggle('active', mode === 'space');
+  renderPanel();
+}
+document.getElementById('btnSelection').addEventListener('click', () => setMode('selection'));
+document.getElementById('btnMood').addEventListener('click', () => setMode('mood'));
+document.getElementById('btnSpace').addEventListener('click', () => setMode('space'));
+
+document.getElementById('btnGenerate').addEventListener('click', () => {
+  alert('In the real app, this would call the AI generation step using your current selection: ' + sel.category + ', ' + sel.size + ', ' + sel.style + ', ' + sel.space + ', faces: ' + sel.faces.join(', '));
+});
+document.getElementById('btnSend').addEventListener('click', () => {
+  alert('In the real app, this would send the current render to WhatsApp or email and log the lead in Odoo CRM.');
+});
+
+render();
+renderPanel();
+</script>
+
+</body>
+</html>
