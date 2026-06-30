@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azar &amp; Abi Habib — Interactive Designer Table</title>
+<style>
+  :root{
+    --yellow:#F2C200;
+    --black:#1A1A1A;
+    --grey:#FAF9F5;
+    --line:#EDEAE0;
+    --line-strong:#D8D5CA;
+    --text-muted:#777;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:#fff;
+    color:var(--black);
+  }
+  .app{
+    max-width:1140px;
+    margin:0 auto;
+    border:1px solid var(--line);
+    min-height:100vh;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    padding:0;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+  header .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:230px;
+    flex-shrink:0;
+    padding:14px 28px 14px 16px;
+  }
+  header .brand img{
+    height:130px;
+    width:auto;
+    display:block;
+  }
+  header .toggle-zone{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    padding:14px 32px;
+  }
+  .layout{
+    display:flex;
+    min-height:640px;
+  }
+  .sidebar{
+    width:250px;
+    flex-shrink:0;
+    background:var(--grey);
+    border-right:1px solid var(--line);
+    padding:20px 16px;
+    overflow-y:auto;
+  }
+  .group-label{
+    background:var(--yellow);
+    color:var(--black);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+    text-align:center;
+    padding:8px 12px;
+    border-radius:6px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  .group-label .clear-btn{
+    background:none;
+    border:none;
+    color:#5A4B00;
+    font-size:10px;
+    font-weight:700;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+  .chip-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:18px;
+  }
+  .chip{
+    border:1px solid var(--line-strong);
+    background:#fff;
+    color:#444;
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:all 0.12s ease;
+  }
+  .chip:hover{
+    border-color:var(--black);
+  }
+  .chip.active{
+    background:#E2DFD5;
+    border-color:#C9C5B6;
+    color:var(--black);
+    font-weight:600;
+  }
+  .divider{
+    height:1px;
+    background:var(--line-strong);
+    margin:4px 0 16px;
+  }
+  .surfaces-list{
+    margin-bottom:6px;
+  }
+  .surface-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#fff;
+    border:1px solid var(--line-strong);
+    border-radius:7px;
+    padding:7px 9px;
+    margin-bottom:7px;
+    font-size:11px;
+  }
+  .surface-row .meta{
+    line-height:1.4;
+  }
+  .surface-row .meta b{
+    display:block;
+    font-size:12px;
+  }
+  .surface-row .remove{
+    background:none;
+    border:none;
+    color:#B33A3A;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    padding:0 0 0 8px;
+    line-height:1;
+  }
+  .empty-note{
+    font-size:11px;
+    color:var(--text-muted);
+    text-align:center;
+    padding:8px 0 4px;
+  }
+  .main{
+    flex:1;
+    padding:20px 32px 26px;
+    display:flex;
+    flex-direction:column;
+  }
+  .toggle{
+    display:flex;
+    flex-shrink:0;
+  }
+  .toggle button{
+    border:1.5px solid var(--black);
+    background:#fff;
+    color:var(--black);
+    font-size:13px;
+    font-weight:600;
+    padding:10px 22px;
+    cursor:pointer;
+  }
+  .toggle button:first-child{
+    border-radius:7px 0 0 7px;
+    border-right:none;
+  }
+  .toggle button:not(:first-child):not(:last-child){
+    border-radius:0;
+    border-right:none;
+  }
+  .toggle button:last-child{
+    border-radius:0 7px 7px 0;
+  }
+  .toggle button.active{
+    background:var(--black);
+    color:#fff;
+  }
+  .panel{
+    flex:1;
+    background:var(--grey);
+    border:1px solid var(--line);
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:28px;
+    text-align:center;
+    gap:14px;
+    overflow-y:auto;
+  }
+  .panel-label{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+  }
+  .assign-bar{
+    width:100%;
+    max-width:620px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 14px;
+    font-size:12px;
+    flex-wrap:wrap;
+  }
+  .assign-bar .lbl{
+    font-weight:700;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:0.3px;
+  }
+  .assign-bar .surf-chip{
+    border:1px solid var(--line-strong);
+    background:var(--grey);
+    color:#444;
+    font-size:12px;
+    padding:5px 10px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .assign-bar .surf-chip.active{
+    background:var(--yellow);
+    border-color:var(--yellow);
+    color:var(--black);
+    font-weight:700;
+  }
+  .render-box{
+    background:#F0EDE3;
+    border:1.5px dashed var(--line-strong);
+    border-radius:8px;
+    width:100%;
+    max-width:560px;
+    flex:1;
+    min-height:240px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#999;
+    font-size:13px;
+  }
+  .selection-summary{
+    font-size:12px;
+    color:var(--text-muted);
+    max-width:480px;
+    line-height:1.7;
+  }
+  .tile-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    width:100%;
+    max-width:560px;
+  }
+  .tile-card{
+    background:#fff;
+    border:2px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    text-align:left;
+    cursor:pointer;
+    transition:border-color 0.12s ease;
+  }
+  .tile-card:hover{
+    border-color:var(--line-strong);
+  }
+  .tile-card.picked{
+    border-color:var(--yellow);
+  }
+  .tile-card .swatch{
+    height:64px;
+    position:relative;
+  }
+  .tile-card .picked-badge{
+    position:absolute;
+    top:4px;
+    right:4px;
+    background:var(--yellow);
+    color:var(--black);
+    font-size:9px;
+    font-weight:700;
+    padding:2px 6px;
+    border-radius:4px;
+  }
+  .tile-card .info{
+    padding:6px 8px;
+  }
+  .tile-card .info .name{
+    font-size:11px;
+    font-weight:600;
+    color:var(--black);
+  }
+  .tile-card .info .stock{
+    font-size:10px;
+    margin-top:2px;
+  }
+  .add-surface-btn-inline{
+    background:var(--black);
+    color:#fff;
+    border:none;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    padding:11px 22px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .add-surface-btn-inline:disabled{
+    background:#B9B6AC;
+    cursor:not-allowed;
+  }
+  .brief-card{
+    width:100%;
+    max-width:640px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    text-align:left;
+  }
+  .brief-hero{
+    height:200px;
+    background:linear-gradient(135deg, #D9D5C9 0%, #BFBAAA 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+  }
+  .brief-hero .t1{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    color:#6B6B6B;
+    text-transform:uppercase;
+  }
+  .brief-hero .t2{
+    font-size:10px;
+    color:#8A8A8A;
+  }
+  .brief-body{
+    padding:18px 22px;
+  }
+  .brief-body h4{
+    margin:0 0 10px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+  }
+  .brief-surface-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:8px;
+    font-size:12px;
+  }
+  .brief-surface-row .sw{
+    width:34px;
+    height:34px;
+    border-radius:5px;
+    flex-shrink:0;
+  }
+  .brief-story{
+    font-size:12px;
+    color:#3A3A3A;
+    line-height:1.6;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .actions button{
+    flex:1;
+    min-width:120px;
+    font-size:13px;
+    font-weight:600;
+    padding:12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .btn-generate{
+    background:var(--yellow);
+    color:var(--black);
+    border:none;
+  }
+  .btn-send{
+    background:#fff;
+    color:var(--black);
+    border:1.5px solid var(--black);
+  }
+  .btn-samples{
+    background:#fff;
+    color:#8A6A00;
+    border:1.5px solid var(--yellow);
+  }
+  .samples-note{
+    font-size:10px;
+    color:var(--text-muted);
+    width:100%;
+    text-align:center;
+    margin-top:-8px;
+  }
+  .footer-bee{
+    position:fixed;
+    bottom:18px;
+    right:18px;
+    opacity:0.9;
+  }
+  .footer-bee img{
+    width:54px;
+    height:auto;
+    display:block;
+  }
+  @media (max-width:760px){
+    .layout{flex-direction:column;}
+    .sidebar{width:100%; border-right:none; border-bottom:1px solid var(--line);}
+    .footer-bee{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <img src="logo.png" alt="Azar &amp; Abi Habib logo">
+    </div>
+    <div class="toggle-zone">
+      <div class="toggle">
+        <button id="btnSelection">selection</button>
+        <button id="btnSpace" class="active">space visualizer</button>
+        <button id="btnBrief">design brief</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="group-label">space <button class="clear-btn" data-clear="space">clear</button></div>
+      <div class="chip-row" id="spaceRow"></div>
+
+      <div class="group-label">style <button class="clear-btn" data-clear="style">clear</button></div>
+      <div class="chip-row" id="styleRow"></div>
+
+      <div class="group-label">select surface</div>
+      <div class="chip-row" id="surfaceRow"></div>
+
+      <div class="group-label">size <button class="clear-btn" data-clear="size">clear</button></div>
+      <div class="chip-row" id="sizeRow"></div>
+
+      <div class="group-label">color <button class="clear-btn" data-clear="color">clear</button></div>
+      <div class="chip-row" id="colorRow"></div>
+
+      <div class="group-label">category <button class="clear-btn" data-clear="category">clear</button></div>
+      <div class="chip-row" id="categoryRow"></div>
+
+      <div class="divider"></div>
+
+      <div class="surfaces-list" id="surfacesList"></div>
+    </div>
+
+    <div class="main">
+      <div class="panel" id="panel"></div>
+
+      <div class="actions" id="actionsRow"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-bee">
+  <img src="3d_logo_bee.png" alt="Azar &amp; Abi Habib bee mark">
+</div>
+
+<script>
+const data = {
+  space: ['bathroom','kitchen','reception area','living room'],
+  style: ['industrial','minimalist','contemporary','art deco','bohemian','scandinavian'],
+  surface: ['wall 1','wall 2','floor'],
+  size: ['10x10','20x20','60x60','60x120','120x120','75x150','90x180','120x240','120x280'],
+  color: ['black','white','beige','greige','grey','red','green','blue'],
+  category: ['concrete','stone','marble','plain','on sale']
+};
+
+const catalog = [
+  { name:'Calacatta Marble', category:'marble', size:'60x120', color:'#E8E3D4', colorName:'beige', stock:42 },
+  { name:'Carrara Classic', category:'marble', size:'60x60', color:'#D8D2BE', colorName:'white', stock:18 },
+  { name:'Onyx Veil', category:'marble', size:'120x120', color:'#C9C2A8', colorName:'greige', stock:7 },
+  { name:'Urban Concrete Grey', category:'concrete', size:'60x120', color:'#A9A9A4', colorName:'grey', stock:55 },
+  { name:'Loft Concrete Sand', category:'concrete', size:'90x180', color:'#B9AE96', colorName:'beige', stock:30 },
+  { name:'Industrial Concrete Dark', category:'concrete', size:'60x60', color:'#6E6E68', colorName:'black', stock:12 },
+  { name:'Pietra Stone Grey', category:'stone', size:'120x240', color:'#8E8E86', colorName:'grey', stock:24 },
+  { name:'Basalt Stone Black', category:'stone', size:'60x120', color:'#2E2A22', colorName:'black', stock:9 },
+  { name:'Sale Bin Plain White', category:'plain', size:'20x20', color:'#F2F0E9', colorName:'white', stock:120 }
+];
+
+// Filters are now fully optional (null = no filter applied). Only "surface" always has a value,
+// since you can't assign a tile without knowing which surface you're assigning it to.
+let working = { space: null, style: null, surface: 'wall 1', size: null, color: null, category: null };
+
+// The tile the customer has clicked on in the grid but not yet committed via "Add Surface"
+let pendingTile = null;
+
+// Committed surfaces — each now holds a real tile object, not just abstract specs
+let surfaces = [];
+
+let mode = 'space';
+
+function chip(label, group, active){
+  return '<button class="chip' + (active ? ' active' : '') + '" data-group="' + group + '" data-label="' + label + '">' + label + '</button>';
+}
+
+function renderSidebar(){
+  document.getElementById('spaceRow').innerHTML = data.space.map(s => chip(s,'space', working.space===s)).join('');
+  document.getElementById('styleRow').innerHTML = data.style.map(s => chip(s,'style', working.style===s)).join('');
+  document.getElementById('surfaceRow').innerHTML = data.surface.map(s => chip(s,'surface', working.surface===s)).join('');
+  document.getElementById('sizeRow').innerHTML = data.size.map(s => chip(s,'size', working.size===s)).join('');
+  document.getElementById('colorRow').innerHTML = data.color.map(s => chip(s,'color', working.color===s)).join('');
+  document.getElementById('categoryRow').innerHTML = data.category.map(s => chip(s,'category', working.category===s)).join('');
+
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.group, l = btn.dataset.label;
+      if (g === 'surface'){
+        // surface always needs a value -- single select, no deselect
+        working.surface = l;
+      } else {
+        // all other filters: click to select, click again to deselect (toggle)
+        working[g] = (working[g] === l) ? null : l;
+      }
+      pendingTile = null; // changing filters clears any unconfirmed tile pick
+      renderSidebar();
+      renderPanel();
+    });
+  });
+
+  document.querySelectorAll('.clear-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      working[btn.dataset.clear] = null;
+      pendingTile = null;
+      renderSidebar();
+      renderPanel();
+    });
+  });
+}
+
+function renderSurfacesList(){
+  const list = document.getElementById('surfacesList');
+  if (surfaces.length === 0){
+    list.innerHTML = '<div class="empty-note">no surfaces added yet</div>';
+    return;
+  }
+  list.innerHTML = surfaces.map((s, i) =>
+    '<div class="surface-row"><div class="meta"><b>' + s.surface + '</b>' + s.tileName + ' &middot; ' + s.size + ', ' + s.colorName + '</div><button class="remove" data-idx="' + i + '" title="remove">&times;</button></div>'
+  ).join('');
+  document.querySelectorAll('.remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      surfaces.splice(parseInt(btn.dataset.idx), 1);
+      renderSurfacesList();
+      renderPanel();
+    });
+  });
+}
+
+function addSurfaceFromPendingTile(){
+  if (!pendingTile) return;
+  const existingIdx = surfaces.findIndex(s => s.surface === working.surface);
+  const entry = {
+    surface: working.surface,
+    tileName: pendingTile.name,
+    size: pendingTile.size,
+    color: pendingTile.color,
+    colorName: pendingTile.colorName,
+    category: pendingTile.category
+  };
+  if (existingIdx >= 0) surfaces[existingIdx] = entry;
+  else surfaces.push(entry);
+  pendingTile = null;
+  renderSurfacesList();
+  renderPanel();
+}
+
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  const actions = document.getElementById('actionsRow');
+
+  if (mode === 'selection'){
+    let pool = catalog.filter(t => {
+      if (working.size && t.size !== working.size) return false;
+      if (working.color && t.colorName !== working.color) return false;
+      if (working.category && t.category !== working.category) return false;
+      return true;
+    });
+
+    const surfChips = data.surface.map(s =>
+      '<button class="surf-chip' + (working.surface===s ? ' active' : '') + '" data-surf="' + s + '">' + s + '</button>'
+    ).join('');
+
+    panel.innerHTML =
+      '<div class="assign-bar"><span class="lbl">assigning tile to:</span>' + surfChips + '</div>' +
+      '<div class="panel-label">in-stock tiles matching your filter</div>' +
+      '<div class="tile-grid">' +
+        pool.map((t, i) => {
+          const isPicked = pendingTile && pendingTile.name === t.name;
+          return '<div class="tile-card' + (isPicked ? ' picked' : '') + '" data-tileidx="' + i + '">' +
+            '<div class="swatch" style="background:' + t.color + ';">' + (isPicked ? '<div class="picked-badge">selected</div>' : '') + '</div>' +
+            '<div class="info"><div class="name">' + t.name + '</div><div class="stock" style="color:' + (t.stock > 0 ? '#2E8B57' : '#B33A3A') + ';">' + (t.stock > 0 ? t.stock + ' m\u00b2 in stock' : 'out of stock') + '</div></div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      (pool.length === 0 ? '<div class="selection-summary">no tiles match the current filters</div>' : '');
+
+    document.querySelectorAll('.surf-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        working.surface = btn.dataset.surf;
+        pendingTile = null;
+        renderSidebar();
+        renderPanel();
+      });
+    });
+    document.querySelectorAll('.tile-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const t = pool[parseInt(card.dataset.tileidx)];
+        pendingTile = (pendingTile && pendingTile.name === t.name) ? null : t;
+        renderPanel();
+      });
+    });
+
+    actions.innerHTML =
+      '<button class="add-surface-btn-inline" id="btnAddSurfaceInline"' + (pendingTile ? '' : ' disabled') + '>' +
+        (pendingTile ? '+ add ' + working.surface + ': ' + pendingTile.name : 'select a tile to add a surface') +
+      '</button>' +
+      '<button class="btn-send" id="btnDownloadSelectionPdf">download pdf of this selection</button>';
+    document.getElementById('btnAddSurfaceInline').addEventListener('click', addSurfaceFromPendingTile);
+    document.getElementById('btnDownloadSelectionPdf').addEventListener('click', () => {
+      const filterText = [working.size, working.color, working.category].filter(Boolean).join(', ') || 'no filters applied';
+      alert('In the real app, this exports the currently filtered tile list (' + filterText + ') as a printable catalog PDF -- useful for building custom catalogues on the fly.');
+    });
+
+  } else if (mode === 'space'){
+    const surfaceText = surfaces.length ? surfaces.map(s => s.surface + ': ' + s.tileName + ' (' + s.size + ', ' + s.colorName + ')').join(' | ') : 'no surfaces added yet -- go to Selection to assign tiles';
+    panel.innerHTML =
+      '<div class="panel-label">space visualizer preview</div>' +
+      '<div class="render-box">CGI render of ' + (working.space || 'selected space') + (working.style ? ' (' + working.style + ')' : '') + '</div>' +
+      '<div class="selection-summary">' + surfaceText + '</div>';
+    actions.innerHTML =
+      '<button class="btn-generate" id="btnGenerate">generate</button>' +
+      '<button class="btn-send" id="btnSend">send to whatsapp</button>';
+    document.getElementById('btnGenerate').addEventListener('click', () => {
+      alert('In the real app, this calls the AI generation step using: ' + (working.space || 'unspecified space') + ', ' + (working.style || 'unspecified style') + ' -- surfaces: ' + surfaceText);
+    });
+    document.getElementById('btnSend').addEventListener('click', () => {
+      alert('In the real app, this sends the current render to WhatsApp or email and logs the lead in Odoo CRM.');
+    });
+
+  } else {
+    const surfaceRows = surfaces.length ? surfaces.map(s =>
+      '<div class="brief-surface-row"><div class="sw" style="background:' + s.color + ';"></div><div><b>' + s.surface + '</b> -- ' + s.tileName + ' (' + s.size + ', ' + s.colorName + ')</div></div>'
+    ).join('') : '<div class="empty-note">add at least one surface in Selection mode to generate a design brief</div>';
+
+    panel.innerHTML =
+      '<div class="brief-card">' +
+        '<div class="brief-hero"><div class="t1">AI Room Render</div><div class="t2">(pulled from Space Visualizer output)</div></div>' +
+        '<div class="brief-body">' +
+          '<h4>Selected Surfaces</h4>' +
+          surfaceRows +
+          '<div class="brief-story"><b>Design Story:</b> ' + (working.style ? working.style.charAt(0).toUpperCase() + working.style.slice(1) + ' ' : '') + (working.space || 'space') + ' combining ' + (surfaces.map(s => s.category).join(' and ') || 'your selected finishes') + ' for a balanced, cohesive look.</div>' +
+        '</div>' +
+      '</div>';
+    actions.innerHTML =
+      '<button class="btn-generate" id="btnDownloadBrief">download pdf</button>' +
+      '<button class="btn-send" id="btnShareBrief">share to whatsapp</button>' +
+      '<button class="btn-send" id="btnQuoteBrief">request quotation</button>' +
+      '<button class="btn-samples" id="btnSamplesBrief">send samples</button>' +
+      '<div class="samples-note">sample delivery is a paid service -- charges apply</div>';
+    document.getElementById('btnDownloadBrief').addEventListener('click', () => {
+      alert('In the real app, this generates the fixed-layout Design Brief PDF: AI room render (from Space Visualizer) + surface specs (from Odoo) + design story text.');
+    });
+    document.getElementById('btnShareBrief').addEventListener('click', () => {
+      alert('In the real app, this shares the generated Design Brief PDF via WhatsApp.');
+    });
+    document.getElementById('btnQuoteBrief').addEventListener('click', () => {
+      alert('In the real app, this creates a quotation request in Odoo CRM using the selected surfaces.');
+    });
+    document.getElementById('btnSamplesBrief').addEventListener('click', () => {
+      alert('In the real app, this opens a confirmation step explaining sample delivery charges before placing the request.');
+    });
+  }
+}
+
+function setMode(newMode){
+  mode = newMode;
+  document.getElementById('btnSelection').classList.toggle('active', mode === 'selection');
+  document.getElementById('btnSpace').classList.toggle('active', mode === 'space');
+  document.getElementById('btnBrief').classList.toggle('active', mode === 'brief');
+  renderPanel();
+}
+document.getElementById('btnSelection').addEventListener('click', () => setMode('selection'));
+document.getElementById('btnSpace').addEventListener('click', () => setMode('space'));
+document.getElementById('btnBrief').addEventListener('click', () => setMode('brief'));
+
+renderSidebar();
+renderSurfacesList();
+renderPanel();
+</script>
+
+</body>
+</html>
